@@ -1,63 +1,29 @@
-name: My-GitHubActions-Basics
-env:
-  APPLICATION_NAME    : "MyFlask"
-  DEPLOY_PACKAGE_NAME : "flask-deploy-ver-${{ github.sha }}"
-
-on: 
+name: deploy to gcs
+on:
   push:
-    branches: 
-      - main
+    branches: [ "main" ]
+
 
 jobs:
   my_testing:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Print Hello Message in Testing
-      run : echo "Hello World from Testing job"
-    
-    - name: Execure few commands
-      run : |
-        echo "Hello Message1"
-        echo "Hello Message2"
-        echo "Appication name: ${{ env.APPLICATION_NAME }}"
-    
-    - name: List current folder
-      run : ls -la
-   
-    - name: Git clone my repo
-      uses: actions/checkout@v1   
+  # permissions:
+  #   contents: 'read'
+  #   id-token: 'write'
   
-    - name: List current folder
-      run : ls -la
-  
-  my_deploy:
-    runs-on: ubuntu-latest
-    needs: [my_testing]
-    env:
-      VAR1 : "This is Job Level Variable1"
-      VAR2 : "This is Job Lebel Variable2"
-    
     steps:
-    - name: Print Hello Message in Deploy
-      run : echo "Hello World from Deploy job"
-      
-    - name: Print env vars
-      run : |
-        echo "Var1 = ${{ env.VAR1 }}"
-        echo "Var2 = ${{ env.VAR2 }}"
-        echo "Var3 = $LOCAL_VAR"
-      env:
-        LOCAL_VAR: "This is Superr local Environment variable"
+      - name: Checkout
+        uses: actions/checkout@v2
+  
+      - id: auth
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SECRET }}'
 
-    
-    - name: Printing Deployment package
-      run : echo "Deplyo pakcage name is ${{ env.DEPLOY_PACKAGE_NAME }}"
-    
-    - name: Lets test some packages if they are here 1
-      run : aws --version
-
-    - name: Lets test some packages if they are here 2
-      run : zip --version
-      
-      
+      - id: 'upload-folder'
+        uses: 'google-github-actions/upload-cloud-storage@v1'
+        with:
+          path: 'index.html'
+          destination: 'www.irig.tech'
