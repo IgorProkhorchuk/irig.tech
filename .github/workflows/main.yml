@@ -1,0 +1,18 @@
+jobs:
+  job_id:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: 'projects/700275772641/locations/global/workloadIdentityPools/github-actions-pool/providers/github'
+        service_account: 'github-actions@gcp-2022-1-phase2-prokhorchuk.iam.gserviceaccount.com'
+
+    - id: 'upload-folder'
+      uses: 'google-github-actions/upload-cloud-storage@v1'
+      with:
+        path: 'index.html'
+        destination: 'www.irig.tech'
