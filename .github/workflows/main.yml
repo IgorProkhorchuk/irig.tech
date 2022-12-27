@@ -4,24 +4,24 @@ on:
     branches:
       - main
 
-  job_id:
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
   jobs:
 
-  steps:
-    - uses: 'actions/checkout@v3'
+    job_id:
+      permissions:
+        contents: 'read'
+        id-token: 'write'
 
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        credentials_json: '${{ secrets.GCP_SECRET }}'
+    steps:
+      - uses: 'actions/checkout@v3'
 
-    - id: 'upload-folder'
-      uses: 'google-github-actions/upload-cloud-storage@v1'
-      with:
-        path: 'index.html'
-        destination: 'www.irig.tech'
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GCP_SECRET }}'
+
+      - id: 'upload-folder'
+        uses: 'google-github-actions/upload-cloud-storage@v1'
+        with:
+          path: 'index.html'
+          destination: 'www.irig.tech'
