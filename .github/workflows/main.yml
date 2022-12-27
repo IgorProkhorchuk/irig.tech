@@ -4,18 +4,21 @@ on:
     branches:
       - main
 
-jobs:
   job_id:
     permissions:
       contents: 'read'
       id-token: 'write'
 
-    steps:
+  jobs:
+
+  steps:
+    - uses: 'actions/checkout@v3'
+
     - id: 'auth'
+      name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v1'
       with:
-        workload_identity_provider: 'projects/700275772641/locations/global/workloadIdentityPools/github-actions-pool/providers/github'
-        service_account: 'github-actions@gcp-2022-1-phase2-prokhorchuk.iam.gserviceaccount.com'
+        credentials_json: '${{ secrets.GCP_SECRET }}'
 
     - id: 'upload-folder'
       uses: 'google-github-actions/upload-cloud-storage@v1'
